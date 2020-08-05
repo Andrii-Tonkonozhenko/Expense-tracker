@@ -1,82 +1,85 @@
 <?php
 
-require 'Bank account.php';
+require 'Account.php';
+require 'AccountRepository.php';
+require 'Record.php';
+require 'RecordRepositoryInterface.php';
+require 'Category.php';
+require 'CategoryRepository.php';
 require 'Tracker Exception.php';
 
 class ExpenseTracker
 {
-    private $accounts = [];
+    private $accountRepository;
+    private $recordRepository;
+    private $categoryRepository;
 
-    public function addAccount(BankAccount $account) : void
+    public function __construct(InMemoryAccountRepository $account, RecordRepositoryInterface $recordRepository, CategoryRepository $categoryRepository)
     {
-        $this->accounts[$account->getId()] = $account;
+        $this->accountRepository = $account;
+        $this->recordRepository = $recordRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
-    public function getAccountBalance(int $account) : float
+    public function addAccount(string $accountName, float $accountBalance): void
     {
-        if (!$this->accounts[$account]) {
-            throw new AccountNotFound();
-        }
-
-        return $this->accounts[$account]->getAccountBalance();
+        $account = new Account();
+        $account->setTitle($accountName);
+        $account->setAccountBalance($accountBalance);
+        $this->accountRepository->createAccount($account);
     }
 
-    public function accountReplenishment(int $account, float $money) : void
+    public function addCategory(string $categoryTitle): void
     {
-        if (!$this->accounts[$account]) {
-            throw new AccountNotFound();
-        }
-
-        $this->accounts[$account]->accountReplenishment($money);
+        $category = new Category();
+        $category->setTitle($categoryTitle);
+        $this->categoryRepository->addCategory($category);
     }
 
-    public function setCosts(int $account, float $money) : void
+    public function getAccountBalance(int $id_account): void
     {
-        if (!$this->accounts[$account]) {
-            throw new AccountNotFound();
-        }
-
-        $this->accounts[$account]->setCosts($money);
+        $this->recordRepository->getAccountBalance($this->accountRepository->getAccount($id_account));
     }
 
-    public function showCostHistory(int $account): void
+    public function addReplenishment(int $id_account, int $id_category, float $money, $date) : void
     {
-        if (!$this->accounts[$account]) {
-            throw new AccountNotFound();
-        }
-
-        $this->accounts[$account]->costHistory();
+        $this->accountRepository->update($id_account, $money);
+        $record = new Record($id_account, $id_category, $money, $date);
+        $this->recordRepository->addReplenishment($record);
     }
 
-    public function showAccountReplenishmentHistory(int $account): void
+    public function addCosts(int $id_account,  int $id_category, float $money, $date) : void
     {
-        if (!$this->accounts[$account]) {
-            throw new AccountNotFound();
-        }
-
-        $this->accounts[$account]->accountReplenishmentHistory();
+        $record = new Record($id_account, $id_category, $money, $date);
+        $this->recordRepository->addReplenishment($record);
     }
+
 }
 
-$expense_tracker = new ExpenseTracker();
+$account = new InMemoryAccountRepository();
+$recordRepository = new InMemoryRecordRepository();
+$categoryRepository = new CategoryRepository();
+$expense_tracker = new ExpenseTracker($account, $recordRepository, $categoryRepository);
 
-$monoBankStudy = new BankAccount(1,'MonoBank','Study');
-$monoBankFamily = new BankAccount(2,'MonoBank','Family');
-$privateBankAndrii = new BankAccount(3,'PrivateBank','Andrii');
+
 try {
-    $expense_tracker->addAccount($monoBankFamily);
-    $expense_tracker->addAccount($monoBankStudy);
-    $expense_tracker->addAccount($privateBankAndrii);
+    $expense_tracker->addCategory('Income');
+    $expense_tracker->addCategory('Food');
+    $expense_tracker->addCategory('Purchases');
+    $expense_tracker->addCategory('Transport');
+    $expense_tracker->addCategory('Other');
 
-    $expense_tracker->accountReplenishment(1, 200);
-    $expense_tracker->accountReplenishment(1, 15);
-    $expense_tracker->accountReplenishment(1, 22.4);
-    $expense_tracker->setCosts(1, 55);
-    $expense_tracker->setCosts(1, 15);
-//    $expense_tracker->showCostHistory(1);
-    $expense_tracker->showAccountReplenishmentHistory(1);
+    $expense_tracker->addAccount('Study',250);
+    $expense_tracker->addAccount('Family',444);
+    $expense_tracker->addAccount('Andrii',33.33);
+
+
+    $expense_tracker->addReplenishment(1,1,22.7, (date("dS of F  h:I:s A ")));
+
+    $expense_tracker->addReplenishment(2,1,1.75, (date("dS of F  h:I:s A ")));
+    $expense_tracker->getAccountBalance(2);
+
 } catch (ExpenseTrackerException $e) {
     die($e->getMessage());
 }
-//echo $expense_tracker->getAccountBalance(1);
 
