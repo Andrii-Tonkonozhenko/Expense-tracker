@@ -91,7 +91,7 @@ class ExpenseTracker
         $this->showRecords($this->recordRepository->findByCategoryId($categoryId));
     }
 
-    public function showAllCategory(): void
+    public function showAllCategoriesBalance(): void
     {
         foreach ($this->accountRepository->getAllAccounts() as $account) {
             echo $account->getTitle() . "</br>";
@@ -141,10 +141,9 @@ try {
 
 //    $expense_tracker->getAccountBalance(3);
     $expense_tracker->showBalanceOfAllAccounts();
-//    $expense_tracker->showAllRecords();
+    $expense_tracker->showAllRecords();
 //    $expense_tracker->showRecordsByAccount(10);
 //    $expense_tracker->showRecordsByCategory(10);
-    $expense_tracker->showAllCategory();
 //    $expense_tracker->showCategoriesBalanceByAccountId(2);
 } catch (ExpenseTrackerException $e) {
     die($e->getMessage());
