@@ -20,4 +20,24 @@ class Record
     {
         $this->id = $id;
     }
+
+    public function getAccountId() : int
+    {
+        return $this->id_account;
+    }
+
+    public function getCategoryId() : int
+    {
+        return $this->id_category;
+    }
+
+    public function getMoney() : float
+    {
+        return $this->money;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
 }
