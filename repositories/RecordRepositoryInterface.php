@@ -2,7 +2,7 @@
 
 interface RecordRepositoryInterface
 {
-    public function addRecord(Record $record): void;
+    public function createRecord(Record $record): void;
 
     public function getAllRecords(): array;
 
@@ -11,16 +11,13 @@ interface RecordRepositoryInterface
     public function findAccountById(int $accountId): array;
 
     public function findByCategoryId(int $categoryId): array;
-
-    public function getCategoryBalanceByAccountId(int $accountId, int $categoryId);
-
 }
 
 class InMemoryRecordRepository implements RecordRepositoryInterface
 {
     private $records = [];
 
-    public function addRecord(Record $record): void
+    public function createRecord(Record $record): void
     {
         $record->setId(count($this->records) + 1);
         $this->records[] = $record;
@@ -42,6 +39,7 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
                 $record[] = $record;
             }
         }
+
        return $record;
     }
 
@@ -53,6 +51,7 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
                 $records[] = $record;
             }
         }
+
         return $records;
     }
 
@@ -65,6 +64,7 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
                 $records[] = $record;
             }
         }
+
         return $records;
     }
 
@@ -79,10 +79,4 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
 
         return $sum;
     }
-
-    public function getCategoryBalanceByAccountId(int $accountId, int $categoryId)
-    {
-
-    }
-
 }

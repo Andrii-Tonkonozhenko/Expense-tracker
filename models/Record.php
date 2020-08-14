@@ -8,7 +8,7 @@ class Record
     private $money;
     private $date;
 
-    public function __construct(int $id_account, int $id_category, float $money, $date)
+    public function __construct(int $id_account, int $id_category, float $money, DateTime $date)
     {
         $this->id_account = $id_account;
         $this->id_category = $id_category;
@@ -21,22 +21,22 @@ class Record
         $this->id = $id;
     }
 
-    public function getAccountId() : int
+    public function getAccountId(): int
     {
         return $this->id_account;
     }
 
-    public function getCategoryId() : int
+    public function getCategoryId(): int
     {
         return $this->id_category;
     }
 
-    public function getMoney() : float
+    public function getMoney(): float
     {
         return $this->money;
     }
 
-    public function getDate()
+    public function getDate() : DateTime
     {
         return $this->date;
     }

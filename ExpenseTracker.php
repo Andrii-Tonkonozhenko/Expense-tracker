@@ -36,31 +36,24 @@ class ExpenseTracker
     {
         $category = new Category();
         $category->setTitle($categoryTitle);
-        $this->categoryRepository->addCategory($category);
+        $this->categoryRepository->createCategory($category);
     }
 
     public function showAccountBalance(int $accountId): void
     {
-        $this->accountRepository->getAccountBalance($accountId);
+        echo $this->accountRepository->getAccountBalance($accountId) . "</br>";
     }
 
     public function showBalanceOfAllAccounts(): void
     {
-        $this->accountRepository->getBalanceOfAllAccounts();
+        echo $this->accountRepository->getBalanceOfAllAccounts() . "</br>";
     }
 
-    public function addReplenishment(int $id_account, int $id_category, float $money, $date): void
+    public function addRecord(int $id_account, int $id_category, float $money, DateTime $date): void
     {
         $this->accountRepository->update($this->accountRepository->getAccount($id_account), $money);
         $record = new Record($id_account, $id_category, $money, $date);
-        $this->recordRepository->addRecord($record);
-    }
-
-    public function addExpence(int $id_account, int $id_category, float $money, $date): void
-    {
-        $this->accountRepository->update($this->accountRepository->getAccount($id_account), $money);
-        $record = new Record($id_account, $id_category, $money, $date);
-        $this->recordRepository->addRecord($record);
+        $this->recordRepository->createRecord($record);
     }
 
     public function showRecords(array $records): void
@@ -72,7 +65,7 @@ class ExpenseTracker
             echo 'Account: ' . $account->getTitle() . "</br>";
             echo 'Category: ' . $category->getTitle();
             echo $this->accountRepository->getPrettierMoney($record->getMoney());
-            echo 'Data: ' . $record->getDate() . "</br>" . "</br>";
+            echo 'Data: ' . $record->getDate()->format('dS of F  h:I:s A') . "</br>" . "</br>";
         }
     }
 
@@ -102,10 +95,10 @@ class ExpenseTracker
         }
     }
 
-    public function showCategoriesBalanceByAccountId(int $id): void
+    public function showCategoriesBalanceByAccountId(int $accountId): void
     {
         foreach ($this->categoryRepository->getAllCategory() as $category) {
-            echo $category->getTitle() . ' ' . $this->recordRepository->getCategoryBalance($id,
+            echo $category->getTitle() . ' ' . $this->recordRepository->getCategoryBalance($accountId,
                     $category->getId()) . '</br>';
         }
     }
@@ -116,7 +109,7 @@ $account = new InMemoryAccountRepository();
 $recordRepository = new InMemoryRecordRepository();
 $categoryRepository = new InMemoryCategoryRepository();
 $expense_tracker = new ExpenseTracker($account, $recordRepository, $categoryRepository);
-
+$date = new DateTime('NOW');
 
 try {
     $expense_tracker->addCategory('Income');
@@ -130,21 +123,21 @@ try {
     $expense_tracker->addAccount('Andrii', 33.33);
 
 
-    $expense_tracker->addReplenishment(1, 1, 22.7, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addReplenishment(1, 1, 24.3, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addExpence(3, 2, -42.2, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addReplenishment(2, 1, 2, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addReplenishment(2, 1, 1.75, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addExpence(1, 4, -77, (date("dS of F  h:I:s A ")));
-    $expense_tracker->addReplenishment(2, 5, 155, (date("dS of F  h:I:s A ")));
+    $expense_tracker->addRecord(1, 1, 22.7, $date);
+    $expense_tracker->addRecord(1, 1, 24.3, $date);
+    $expense_tracker->addRecord(3, 2, -42.2, $date);
+    $expense_tracker->addRecord(2, 1, 2, $date);
+    $expense_tracker->addRecord(2, 1, 1.75, $date);
+    $expense_tracker->addRecord(1, 4, -77, $date);
+    $expense_tracker->addRecord(2, 5, 155, $date);
 
 
 //    $expense_tracker->getAccountBalance(3);
-    $expense_tracker->showBalanceOfAllAccounts();
+//    $expense_tracker->showBalanceOfAllAccounts();
     $expense_tracker->showAllRecords();
 //    $expense_tracker->showRecordsByAccount(10);
 //    $expense_tracker->showRecordsByCategory(10);
-//    $expense_tracker->showCategoriesBalanceByAccountId(2);
+    $expense_tracker->showCategoriesBalanceByAccountId(3);
 } catch (ExpenseTrackerException $e) {
     die($e->getMessage());
 }

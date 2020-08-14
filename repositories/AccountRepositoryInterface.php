@@ -4,13 +4,13 @@ interface AccountRepositoryInterface
 {
     public function createAccount(Account $account);
 
-    public function getAccount(int $id_account): Account;
+    public function getAccount(int $accountId): Account;
 
     public function getAllAccounts(): array;
 
-    public function getAccountBalance(int $account): void;
+    public function getAccountBalance(int $account): float;
 
-    public function getBalanceOfAllAccounts(): void;
+    public function getBalanceOfAllAccounts(): float;
 
     public function update(Account $account, float $money): void;
 
@@ -28,16 +28,16 @@ class InMemoryAccountRepository implements AccountRepositoryInterface
     }
 
     /**
-     * @param int $id
+     * @param int $accountId
      * @return Account|null
      * @throws AccountNotFoundException
      */
-    public function getAccount(int $id): Account
+    public function getAccount(int $accountId): Account
     {
         $account = null;
 
         foreach ($this->accounts as $accounts) {
-            if ($accounts->getId() === $id) {
+            if ($accounts->getId() === $accountId) {
                $account = $accounts;
             }
         }
@@ -53,17 +53,17 @@ class InMemoryAccountRepository implements AccountRepositoryInterface
         return $this->accounts;
     }
 
-    public function getAccountBalance(int $accountId): void
+    public function getAccountBalance(int $accountId): float
     {
         foreach ($this->accounts as $account) {
             if ($account->getId() === $accountId)
             {
-                echo 'Account: ' . $account->getTitle() . ' account balance: ' . $account->getBalance() . "</br>";
+               return $account->getBalance();
             }
         }
     }
 
-    public function getBalanceOfAllAccounts(): void
+    public function getBalanceOfAllAccounts(): float
     {
         $balanceOfAll = 0;
 
@@ -71,7 +71,7 @@ class InMemoryAccountRepository implements AccountRepositoryInterface
             $balanceOfAll += $account->getBalance();
         }
 
-        echo $balanceOfAll . '</br>';
+       return $balanceOfAll;
     }
 
     public function update(Account $account, float $money): void
@@ -81,10 +81,6 @@ class InMemoryAccountRepository implements AccountRepositoryInterface
 
     public function getPrettierMoney(float $money): string
     {
-        if ($money > 0) {
-            return ' + ' . $money . '$' . "</br>";
-        }else{
-            return ' ' . $money . '$' . "</br>";
-        }
+        return ($money > 0 ? '+' : ''). "$money$<br/>";
     }
 }
