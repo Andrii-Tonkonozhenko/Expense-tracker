@@ -36,8 +36,10 @@ class Record
         return $this->money;
     }
 
+
     public function getDate() : DateTime
     {
-        return $this->date;
+           return $this->date;
     }
 }
+

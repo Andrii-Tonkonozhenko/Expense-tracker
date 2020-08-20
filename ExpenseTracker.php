@@ -69,9 +69,34 @@ class ExpenseTracker
         }
     }
 
+    public function showAllOrderedByDateDesc(): void
+    {
+        $this->showRecords($this->recordRepository->findAllSortedByDateDesc());
+    }
+
     public function showAllRecords(): void
     {
         $this->showRecords($this->recordRepository->getAllRecords());
+    }
+
+    public function showRecordsByDate($date): void
+    {
+        $this->showRecords($this->recordRepository->findRecordsByDate($date));
+    }
+
+    public function showAccountRecordsByDate(int $accountId, $date): void
+    {
+        $this->showRecords($this->recordRepository->findAccountRecordsByDate($accountId, $date));
+    }
+
+    public function showAccountRecordsByWeek(int $accountId, string $date): void
+    {
+        $this->showRecords($this->recordRepository->findAccountRecordsByWeek($accountId, $date));
+    }
+
+    public function showAccountRecordsByDateAndDate(int $accountId, string $fistDate, string $secondDate): void
+    {
+        $this->showRecords($this->recordRepository->findAccountRecordsByDateAndDate($accountId, $fistDate, $secondDate));
     }
 
     public function showRecordsByAccount(int $accountId): void
@@ -102,14 +127,12 @@ class ExpenseTracker
                     $category->getId()) . '</br>';
         }
     }
-
 }
 
 $account = new InMemoryAccountRepository();
 $recordRepository = new InMemoryRecordRepository();
 $categoryRepository = new InMemoryCategoryRepository();
 $expense_tracker = new ExpenseTracker($account, $recordRepository, $categoryRepository);
-$date = new DateTime('NOW');
 
 try {
     $expense_tracker->addCategory('Income');
@@ -123,21 +146,26 @@ try {
     $expense_tracker->addAccount('Andrii', 33.33);
 
 
-    $expense_tracker->addRecord(1, 1, 22.7, $date);
-    $expense_tracker->addRecord(1, 1, 24.3, $date);
-    $expense_tracker->addRecord(3, 2, -42.2, $date);
-    $expense_tracker->addRecord(2, 1, 2, $date);
-    $expense_tracker->addRecord(2, 1, 1.75, $date);
-    $expense_tracker->addRecord(1, 4, -77, $date);
-    $expense_tracker->addRecord(2, 5, 155, $date);
+    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-08-12 17:16:17'));
+    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-07-15 17:16:17'));
+    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2019-07-15 17:16:17'));
+    $expense_tracker->addRecord(3, 2, -42.2, new DateTime('2019-07-15 14:15:17'));
+    $expense_tracker->addRecord(2, 1, 2, new DateTime('2020-06-15 18:16:17'));
+    $expense_tracker->addRecord(2, 1, 1.75, new DateTime('2018-05-15 12:16:17'));
+    $expense_tracker->addRecord(1, 4, -77, new DateTime('2019-05-15 10:40:16'));
+    $expense_tracker->addRecord(2, 5, 155, new DateTime('2019-05-15 09:20:17'));
 
 
 //    $expense_tracker->getAccountBalance(3);
 //    $expense_tracker->showBalanceOfAllAccounts();
-    $expense_tracker->showAllRecords();
+//    $expense_tracker->showAllRecords();
 //    $expense_tracker->showRecordsByAccount(10);
 //    $expense_tracker->showRecordsByCategory(10);
-    $expense_tracker->showCategoriesBalanceByAccountId(3);
+//    $expense_tracker->showCategoriesBalanceByAccountId(3);
+//    $expense_tracker->showRecordsByDate('2020-01-11');
+    $expense_tracker->showAccountRecordsByDateAndDate(1,'2019-00-00','2021-00-00' );
+//    $expense_tracker->showAccountRecordsByWeek(1,'2020-07-15');
+//    $expense_tracker->showAccountRecordsByDate(1,'2020-07-15');
 } catch (ExpenseTrackerException $e) {
     die($e->getMessage());
 }
