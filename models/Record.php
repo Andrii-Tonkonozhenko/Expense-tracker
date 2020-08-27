@@ -39,7 +39,7 @@ class Record
 
     public function getDate() : DateTime
     {
-           return $this->date;
+        return $this->date;
     }
 }
 
