@@ -117,7 +117,7 @@ class MySQLAccountRepository implements AccountRepositoryInterface
         $stmt->execute([$accountId]);
         $data = $stmt->fetch();
 
-        if (!$data['id'] === $accountId) {
+        if (!$data) {
             throw new AccountNotFoundException();
         }
 

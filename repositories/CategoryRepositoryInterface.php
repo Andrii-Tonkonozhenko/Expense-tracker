@@ -80,7 +80,7 @@ class MySQLCategoryRepository implements CategoryRepositoryInterface
         $stmt->execute([$categoryId]);
         $data = $stmt->fetch();
 
-        if (!$data['id'] === $categoryId) {
+        if (!$data) {
             throw new CategoryNotFoundException();
         }
 

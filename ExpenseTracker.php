@@ -169,8 +169,8 @@ try {
 //    $expense_tracker->showAccountBalance(2);
 //    $expense_tracker->showBalanceOfAllAccounts();
 //    $expense_tracker->showAllRecords();
-    $expense_tracker->showRecordsByAccount(1);
-//    $expense_tracker->showRecordsByCategory(1);
+//    $expense_tracker->showRecordsByAccount(10);
+    $expense_tracker->showRecordsByCategory(10);
 //    $expense_tracker->showAllCategoriesBalance();
 //    $expense_tracker->showRecordsByAccountAndCategory(1,1);
 //    $expense_tracker->showCategoriesBalanceByAccountId(3);
