@@ -13,12 +13,12 @@ interface CategoryRepositoryInterface
 
 class InMemoryCategoryRepository implements CategoryRepositoryInterface
 {
-    private $category = [];
+    private $categories = [];
 
     public function createCategory(Category $category): void
     {
-        $category->setId(count($this->category) + 1);
-        $this->category[] = $category;
+        $category->setId(count($this->categories) + 1);
+        $this->categories[] = $category;
     }
 
     /**
@@ -29,11 +29,13 @@ class InMemoryCategoryRepository implements CategoryRepositoryInterface
     public function getCategory(int $categoryId): Category
     {
         $category = null;
-        foreach ($this->category as $category) {
-            if ($category->getId() === $categoryId) {
-                return $category;
+
+        foreach ($this->categories as $categories) {
+            if ($categories->getId() === $categoryId) {
+                $category = $categories;
             }
         }
+
         if ($category === null) {
             throw new CategoryNotFoundException();
         }
@@ -42,7 +44,7 @@ class InMemoryCategoryRepository implements CategoryRepositoryInterface
 
     public function getAllCategory(): array
     {
-        return $this->category;
+        return $this->categories;
     }
 
 }

@@ -8,11 +8,11 @@ interface RecordRepositoryInterface
 
     public function getCategoryBalance(int $accountId, int $categoryId): float;
 
-    public function findAccountById(int $accountId): array;
+    public function findRecordByAccountId(Account $accountId): array;
 
-    public function findByCategoryId(int $categoryId): array;
+    public function findRecordByCategoryId(Category $categoryId): array;
 
-    public function findByAccountIdAndCategoryId(int $accountId, int $categoryId): array;
+    public function findByAccountIdAndCategoryId(Account $accountId, Category $categoryId): array;
 
     public function findAllSortedByDateDesc(): array;
 
@@ -44,23 +44,22 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
         return $this->records;
     }
 
-    public function findAccountById(int $accountId): array
-    {
-        $record = [];
-        foreach ($this->records as $record) {
-            if ($record->getAccountId() === $accountId) {
-                $record[] = $record;
-            }
-        }
-
-        return $record;
-    }
-
-    public function findByCategoryId(int $categoryId): array
+    public function findRecordByAccountId(Account $account): array
     {
         $records = [];
         foreach ($this->records as $record) {
-            if ($record->getCategoryId() === $categoryId) {
+            if ($record->getAccountId() === $account->getId()) {
+                $records[] = $record;
+            }
+        }
+        return $records;
+    }
+
+    public function findRecordByCategoryId(Category $category): array
+    {
+        $records = [];
+        foreach ($this->records as $record) {
+            if ($record->getCategoryId() === $category->getId()) {
                 $records[] = $record;
             }
         }
@@ -68,12 +67,12 @@ class InMemoryRecordRepository implements RecordRepositoryInterface
         return $records;
     }
 
-    public function findByAccountIdAndCategoryId(int $accountId, int $categoryId): array
+    public function findByAccountIdAndCategoryId(Account $account, Category $category): array
     {
         $records = [];
 
         foreach ($this->records as $record) {
-            if ($record->getAccountId() === $accountId && $record->getCategoryId() === $categoryId) {
+            if ($record->getAccountId() === $account->getId() && $record->getCategoryId() === $category->getId()) {
                 $records[] = $record;
             }
         }
@@ -210,9 +209,9 @@ class MySQLRecordRepository implements RecordRepositoryInterface
 
     }
 
-    public function findAccountById(int $accountId): array
+    public function findRecordByAccountId(Account $account): array
     {
-        $data = $this->pdo->query("SELECT * FROM records WHERE id_account = '{$accountId}'")->fetchAll();
+        $data = $this->pdo->query("SELECT * FROM records WHERE id_account = '{$account->getId()}'")->fetchAll();
 
         $records = [];
 
@@ -223,9 +222,9 @@ class MySQLRecordRepository implements RecordRepositoryInterface
         return $records;
     }
 
-    public function findByCategoryId(int $categoryId): array
+    public function findRecordByCategoryId(Category $category): array
     {
-        $data = $this->pdo->query("SELECT * FROM records WHERE id_category = '{$categoryId}'")->fetchAll();
+        $data = $this->pdo->query("SELECT * FROM records WHERE id_category = '{$category->getId()}'")->fetchAll();
 
         $records = [];
 
@@ -236,9 +235,9 @@ class MySQLRecordRepository implements RecordRepositoryInterface
         return $records;
     }
 
-    public function findByAccountIdAndCategoryId(int $accountId, int $categoryId): array
+    public function findByAccountIdAndCategoryId(Account $account, Category $category): array
     {
-        $data = $this->pdo->query("SELECT * FROM records WHERE id_account ='{$accountId}' AND id_category ='{$categoryId}'")->fetchAll();
+        $data = $this->pdo->query("SELECT * FROM records WHERE id_account ='{$account->getId()}' AND id_category ='{$category->getId()}'")->fetchAll();
 
         $records = [];
 
@@ -318,5 +317,4 @@ class MySQLRecordRepository implements RecordRepositoryInterface
 
         return $records;
     }
-
 }

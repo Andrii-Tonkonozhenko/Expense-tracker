@@ -41,6 +41,7 @@ class InMemoryAccountRepository implements AccountRepositoryInterface
                 $account = $accounts;
             }
         }
+
         if ($account === null) {
             throw new AccountNotFoundException();
         }

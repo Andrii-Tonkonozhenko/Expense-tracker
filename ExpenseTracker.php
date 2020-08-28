@@ -73,7 +73,7 @@ class ExpenseTracker
     {
         $this->showRecords($this->recordRepository->findAllSortedByDateDesc());
     }
-//
+
     public function showAllRecords(): void
     {
         $this->showRecords($this->recordRepository->getAllRecords());
@@ -81,7 +81,8 @@ class ExpenseTracker
 
     public function showRecordsByAccountAndCategory(int $accountId, int $categoryId): void
     {
-        $this->showRecords($this->recordRepository->findByAccountIdAndCategoryId($accountId, $categoryId));
+        $this->showRecords($this->recordRepository->findByAccountIdAndCategoryId($this->accountRepository->getAccount($accountId),
+            $this->categoryRepository->getCategory($categoryId)));
     }
 
     public function showRecordsByDate(string $date): void
@@ -98,7 +99,7 @@ class ExpenseTracker
     {
         $this->showRecords($this->recordRepository->findAccountRecordsByWeek($accountId));
     }
-//
+
     public function showRecordsBetweenDates(int $accountId, string $fistDate, string $secondDate): void
     {
         $this->showRecords($this->recordRepository->findRecordsBetweenDates($accountId, $fistDate, $secondDate));
@@ -106,12 +107,12 @@ class ExpenseTracker
 
     public function showRecordsByAccount(int $accountId): void
     {
-        $this->showRecords($this->recordRepository->findAccountById($accountId));
+        $this->showRecords($this->recordRepository->findRecordByAccountId($this->accountRepository->getAccount($accountId)));
     }
 
     public function showRecordsByCategory(int $categoryId): void
     {
-        $this->showRecords($this->recordRepository->findByCategoryId($categoryId));
+        $this->showRecords($this->recordRepository->findRecordByCategoryId($this->categoryRepository->getCategory($categoryId)));
     }
 
     public function showAllCategoriesBalance(): void
@@ -135,48 +136,48 @@ class ExpenseTracker
         }
     }
 }
+
 $pdo = new PDO('mysql:host=localhost;dbname=expensetracker', 'root', '');
-//$accountRepository = new MySQLAccountRepository($pdo);
-////$categoryRepository = new MySQLCategoryRepository($pdo);
-//$recordRepository = new MySQLRecordRepository($pdo);
-$accountRepository = new InMemoryAccountRepository();
-$categoryRepository = new InMemoryCategoryRepository();
-$recordRepository = new InMemoryRecordRepository();
+$accountRepository = new MySQLAccountRepository($pdo);
+$categoryRepository = new MySQLCategoryRepository($pdo);
+$recordRepository = new MySQLRecordRepository($pdo);
+//$accountRepository = new InMemoryAccountRepository();
+//$categoryRepository = new InMemoryCategoryRepository();
+//$recordRepository = new InMemoryRecordRepository();
 $expense_tracker = new ExpenseTracker($accountRepository, $recordRepository, $categoryRepository);
 
 try {
-    $expense_tracker->addCategory('Income');
-    $expense_tracker->addCategory('Food');
-    $expense_tracker->addCategory('Purchases');
-    $expense_tracker->addCategory('Transport');
-    $expense_tracker->addCategory('Other');
-
-    $expense_tracker->addAccount('Study', 250);
-    $expense_tracker->addAccount('Family', 444);
-    $expense_tracker->addAccount('Andrii', 33.33);
-
-    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-08-12 17:16:17'));
-    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-07-15 17:16:17'));
-    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2019-07-15 17:16:17'));
-    $expense_tracker->addRecord(3, 2, -42.2, new DateTime('2019-07-15 14:15:17'));
-    $expense_tracker->addRecord(2, 1, 2, new DateTime('2020-06-15 18:16:17'));
-    $expense_tracker->addRecord(2, 1, 1.75, new DateTime('2018-05-15 12:16:17'));
-    $expense_tracker->addRecord(1, 4, -77, new DateTime('2019-05-15 10:40:16'));
-    $expense_tracker->addRecord(2, 5, 155, new DateTime('2019-05-15 09:20:17'));
-    $expense_tracker->addRecord(2, 5, 155, new DateTime('NOW'));
-//$expense_tracker->test();
+//    $expense_tracker->addCategory('Income');
+//    $expense_tracker->addCategory('Food');
+//    $expense_tracker->addCategory('Purchases');
+//    $expense_tracker->addCategory('Transport');
+//    $expense_tracker->addCategory('Other');
+//
+//    $expense_tracker->addAccount('Study', 250);
+//    $expense_tracker->addAccount('Family', 444);
+//    $expense_tracker->addAccount('Andrii', 33.33);
+//
+//    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-08-12 17:16:17'));
+//    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2020-07-15 17:16:17'));
+//    $expense_tracker->addRecord(1, 1, 22.7, new DateTime('2019-07-15 17:16:17'));
+//    $expense_tracker->addRecord(3, 2, -42.2, new DateTime('2019-07-15 14:15:17'));
+//    $expense_tracker->addRecord(2, 1, 2, new DateTime('2020-06-15 18:16:17'));
+//    $expense_tracker->addRecord(2, 1, 1.75, new DateTime('2018-05-15 12:16:17'));
+//    $expense_tracker->addRecord(1, 4, -77, new DateTime('2019-05-15 10:40:16'));
+//    $expense_tracker->addRecord(2, 5, 155, new DateTime('2019-05-15 09:20:17'));
+//    $expense_tracker->addRecord(2, 5, 155, new DateTime('NOW'));
 //    $expense_tracker->showAccountBalance(2);
 //    $expense_tracker->showBalanceOfAllAccounts();
 //    $expense_tracker->showAllRecords();
-//    $expense_tracker->showRecordsByAccount(1);
+    $expense_tracker->showRecordsByAccount(1);
 //    $expense_tracker->showRecordsByCategory(1);
 //    $expense_tracker->showAllCategoriesBalance();
 //    $expense_tracker->showRecordsByAccountAndCategory(1,1);
 //    $expense_tracker->showCategoriesBalanceByAccountId(3);
 //    $expense_tracker->showRecordsByDate('2020-07-11');
-//    $expense_tracker->showAccountRecordsByDateAndDate(1,'2019-00-00','2021-00-00' );
+//    $expense_tracker->showRecordsBetweenDates(1,'2019-00-00','2021-00-00' );
 //    $expense_tracker->showAccountRecordsByWeek(2);
-    $expense_tracker->showAccountRecordsByDate(1,'2020-07-15');
+//    $expense_tracker->showAccountRecordsByDate(1,'2020-07-15');
 //    $expense_tracker->showAllOrderedByDateDesc();
 } catch (ExpenseTrackerException $e) {
     die($e->getMessage());
